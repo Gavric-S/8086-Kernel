@@ -19,9 +19,9 @@ extern volatile unsigned tbp;
 typedef void interrupt (*pInterrupt)(...);
 extern pInterrupt oldTimerInt;
 
-// postavlja novu prekidnu rutinu
+// substitutes new interrupt routine
 void subTimerRoutine();
-// vraca staru prekidnu rutinu
+// restores old interrupt routine
 void restoreTimerRoutine();
 
 void interrupt timer(...);

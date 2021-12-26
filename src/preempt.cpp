@@ -42,7 +42,7 @@ extern void tick();
 
 void interrupt timer(...) {
  	if (!explicitDispatch) {
- 		// dekrementira se vreme cekanja za 1 na semaforima
+ 		// decrement value of semaphors by one
  		KernelSem::KernSemList.updateTime();
  		tick();
 		tickCount--;

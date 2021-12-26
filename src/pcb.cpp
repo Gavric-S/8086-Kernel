@@ -24,7 +24,7 @@ PCB* PCB::mainPCB;
 ID PCB::IDCounter = 0;
 
 
-PCB::PCB() { // mainPCB konstruktor
+PCB::PCB() { // mainPCB constructor
 	lock
 		PCB::PCBArray[MAIN_PCB_ID] = this;
 		PCB::PCBCount++;
@@ -63,11 +63,11 @@ PCB::PCB(StackSize stackSize, Time timeSlice, Thread* const ownerThread) {
 	// PSW
 	stack[StackElemNum - 1] = 0x200;
 
-	// f-ja sa run()-om niti
+	// function with run() function of thread
 	stack[StackElemNum - 2] = FP_SEG(PCB::wrapper);
 	stack[StackElemNum - 3] = FP_OFF(PCB::wrapper);
 
-	// inicijalizacija sp, bp i ss
+	// initialize sp, bp and ss
 	sp = FP_OFF(stack + StackElemNum - 12);
 	ss = FP_SEG(stack + StackElemNum - 12);
 	bp = sp;
@@ -79,8 +79,8 @@ PCB::PCB(StackSize stackSize, Time timeSlice, Thread* const ownerThread) {
 	lock
 		blockedPCBs = new BlockedOnPCB();
 		receivedSignals = new ReceivedSignalList(this);
-		// inicijalizacija struktura za signale
-		// i nasledjivanje podesavanja roditelja
+		// initialize signal structures
+		// inherit parent settings
 		for (int i = 0; i < SIGNAL_NUM; i++) {
 			signalHandlers[i] = SignalHandlerList::clone(PCB::runningPCB->signalHandlers[i]);
 			signalStatusVector[i] = ((PCB*)PCB::runningPCB)->signalStatusVector[i];
@@ -93,7 +93,7 @@ PCB::PCB(StackSize stackSize, Time timeSlice, Thread* const ownerThread) {
 PCB::~PCB() {
 	lock
 		delete blockedPCBs;
-		/*if (stack) */delete[] stack;
+		delete[] stack;
 		PCB::PCBArray[id] = 0;
 		PCB::PCBCount--;
 		delete receivedSignals;
@@ -155,7 +155,6 @@ void PCB::wrapper() {
 		PCB::activePCBCount--;
 		PCB::runningPCB->parentPCB->signal(1);
 		((PCB*)PCB::runningPCB)->signal(2);
-		// obrada signala sada jer running nit vise nece dobijati procesor
 		((PCB*)PCB::runningPCB)->processSignals();
 		dispatch();
 	unlock

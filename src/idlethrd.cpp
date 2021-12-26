@@ -8,7 +8,7 @@ IdleThread* IdleThread::idleThread;
 PCB* IdleThread::idlePCB;
 
 IdleThread::IdleThread() : Thread(defaultStackSize, 1) {
-	// inicijalizacija idle	niti
+	// initialize idle thread
 	IdleThread::idleThread = this;
 	IdleThread::idlePCB = PCB::PCBArray[this->getId()];
 	for (int i = 0; i < SIGNAL_NUM; i++) {
